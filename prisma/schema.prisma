@@ -1,0 +1,48 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  uid      String    @id @default(uuid())
+  id       String    @unique
+  name     String    @db.VarChar(100)
+  email    String    @unique
+  password String
+  role     Role      @default(Siswa)
+  Absensi  Absensi[]
+}
+
+model Absensi {
+  id      Int      @id @default(autoincrement())
+  tanggal DateTime @default(now())
+  status  Status   @default(HADIR)
+  user    User     @relation(fields: [idRf], references: [id])
+  idRf  String
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String
+  expiresAt   DateTime
+}
+
+enum Role {
+  Siswa
+  Admin
+}
+
+enum Status {
+  HADIR
+  IZIN
+  SAKIT
+  ALFA
+}
